@@ -9,7 +9,7 @@ export default class Item extends React.Component {
 
 	_itemWidth() {
 		if (this.props.dimensions.justifyRows) {
-			return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
+			return (this.props.dimensions.gridWidth - this.props.dimensions.horizontalMargin * 2) / this.props.dimensions.itemsPerRow;
 		} else {
 			return this.props.dimensions.width;
 		}
@@ -18,15 +18,15 @@ export default class Item extends React.Component {
 	_itemLeft() {
 		let column = this.props.index % this.props.dimensions.itemsPerRow;
 		if (this.props.dimensions.justifyRows) {
-			return column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow);
+			return this.props.dimensions.horizontalMargin + (column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow));
 		} else {
-			return (column * this.props.padding) + (column * this.props.dimensions.width);
+			return this.props.dimensions.horizontalMargin + (column * this.props.padding) + (column * this.props.dimensions.width);
 		}
 	}
 
 	_itemTop() {
 		let row = Math.floor(this.props.index / this.props.dimensions.itemsPerRow);
-		return (row * this.props.padding) + (row * this.props.dimensions.height);
+		return this.props.dimensions.verticalMargin + (row * this.props.padding) + (row * this.props.dimensions.height);
 	}
 
 	// LIFECYCLE

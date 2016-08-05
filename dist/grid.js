@@ -39,6 +39,8 @@ var InfiniteGrid = function (_React$Component) {
 					height: this._itemHeight(),
 					width: this._itemWidth(),
 					gridWidth: 0,
+					verticalMargin: 10,
+					horizontalMargin: 10,
 					justifyRows: true,
 					itemsPerRow: 2
 				}
@@ -52,7 +54,8 @@ var InfiniteGrid = function (_React$Component) {
 				entries: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.object).isRequired,
 				cellHeight: _react2.default.PropTypes.number,
 				cellWidth: _react2.default.PropTypes.number,
-				gridPadding: _react2.default.PropTypes.number,
+				verticalMargin: _react2.default.PropTypes.number,
+				horizontalMargin: _react2.default.PropTypes.number,
 				cellPadding: _react2.default.PropTypes.number,
 				wrapperHeight: _react2.default.PropTypes.number,
 				lazyCallback: _react2.default.PropTypes.func,
@@ -97,10 +100,6 @@ var InfiniteGrid = function (_React$Component) {
 		value: function _gridStyle() {
 			return _.merge({
 				position: 'relative',
-				marginTop: this.props.gridPadding,
-				marginLeft: this.props.gridPadding,
-				marginBottom: this.props.gridPadding,
-				marginRight: this.props.gridPadding,
 				minHeight: this._getGridHeight(),
 				minWidth: '100%'
 			}, this.props.gridStyle);
@@ -113,8 +112,18 @@ var InfiniteGrid = function (_React$Component) {
 	}, {
 		key: '_getGridHeight',
 		value: function _getGridHeight() {
-			var gridRow = Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow);
-			return this.props.entries.length < this.state.itemDimensions.itemsPerRow ? this.state.itemDimensions.height : gridRow > 2 ? gridRow * this.state.itemDimensions.height : 3 * this.state.itemDimensions.height;
+			var rows = 0;
+
+			if (this.props.entries.length < this.state.itemDimensions.itemsPerRow) {
+				rows = 1;
+			} else {
+				rows = Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow);
+				if (this.props.entries.length % this.state.itemDimensions.itemsPerRow > 0) {
+					rows += 1;
+				}
+			}
+
+			return this.props.verticalMargin * 2 + rows * this.state.itemDimensions.height + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
 		}
 	}, {
 		key: '_getWrapperRect',
@@ -156,6 +165,8 @@ var InfiniteGrid = function (_React$Component) {
 					height: this._itemHeight(),
 					width: this._itemWidth(),
 					gridWidth: this._getGridRect().width,
+					verticalMargin: this.props.verticalMargin,
+					horizontalMargin: this.props.horizontalMargin,
 					justifyRows: this.props.justifyRows,
 					itemsPerRow: this._itemsPerRow()
 				},
@@ -165,13 +176,13 @@ var InfiniteGrid = function (_React$Component) {
 	}, {
 		key: '_itemsPerRow',
 		value: function _itemsPerRow() {
-			return Math.floor((this._getGridRect().width + this.props.cellPadding) / (this._itemWidth() + this.props.cellPadding));
+			return Math.floor((this._getGridRect().width + this.props.cellPadding - this.props.horizontalMargin * 2) / (this._itemWidth() + this.props.cellPadding));
 		}
 	}, {
 		key: '_totalRows',
 		value: function _totalRows() {
 			var rows = this.props.entries.length / this._itemsPerRow();
-			var scrolledPastHeight = rows * this._itemHeight() + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
+			var scrolledPastHeight = this.props.verticalMargin + rows * this._itemHeight() + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
 			if (scrolledPastHeight < 0) return 0;
 			return scrolledPastHeight;
 		}
@@ -180,7 +191,7 @@ var InfiniteGrid = function (_React$Component) {
 		value: function _scrolledPastRows() {
 			var rect = this._getGridRect();
 			var topScrollOffset = rect.height - rect.bottom;
-			return Math.floor((topScrollOffset + this.props.cellPadding) / (this._itemHeight() + this.props.cellPadding));
+			return Math.floor((topScrollOffset + this.props.cellPadding - this.props.verticalMargin) / (this._itemHeight() + this.props.cellPadding));
 		}
 	}, {
 		key: '_itemHeight',
@@ -195,7 +206,7 @@ var InfiniteGrid = function (_React$Component) {
 	}, {
 		key: '_numVisibleRows',
 		value: function _numVisibleRows() {
-			return Math.ceil((this._getWrapperRect().height + this.props.cellPadding) / (this._itemHeight() + this.props.cellPadding));
+			return Math.ceil((this._getWrapperRect().height + this.props.cellPadding - this.props.verticalMargin) / (this._itemHeight() + this.props.cellPadding));
 		}
 	}, {
 		key: '_lazyCallback',
@@ -321,7 +332,8 @@ exports.default = InfiniteGrid;
 
 InfiniteGrid.defaultProps = {
 	buffer: 10,
-	gridPadding: 10,
+	verticalMargin: 10,
+	horizontalMargin: 10,
 	cellPadding: 10,
 	entries: [],
 	cellHeight: 250,

@@ -33,7 +33,7 @@ var Item = function (_React$Component) {
 		key: '_itemWidth',
 		value: function _itemWidth() {
 			if (this.props.dimensions.justifyRows) {
-				return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
+				return (this.props.dimensions.gridWidth - this.props.dimensions.horizontalMargin * 2) / this.props.dimensions.itemsPerRow;
 			} else {
 				return this.props.dimensions.width;
 			}
@@ -43,16 +43,16 @@ var Item = function (_React$Component) {
 		value: function _itemLeft() {
 			var column = this.props.index % this.props.dimensions.itemsPerRow;
 			if (this.props.dimensions.justifyRows) {
-				return column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow);
+				return this.props.dimensions.horizontalMargin + column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow);
 			} else {
-				return column * this.props.padding + column * this.props.dimensions.width;
+				return this.props.dimensions.horizontalMargin + column * this.props.padding + column * this.props.dimensions.width;
 			}
 		}
 	}, {
 		key: '_itemTop',
 		value: function _itemTop() {
 			var row = Math.floor(this.props.index / this.props.dimensions.itemsPerRow);
-			return row * this.props.padding + row * this.props.dimensions.height;
+			return this.props.dimensions.verticalMargin + row * this.props.padding + row * this.props.dimensions.height;
 		}
 
 		// LIFECYCLE

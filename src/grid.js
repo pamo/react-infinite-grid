@@ -10,7 +10,8 @@ export default class InfiniteGrid extends React.Component {
 			entries: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 			cellHeight: React.PropTypes.number,
 			cellWidth: React.PropTypes.number,
-			gridPadding: React.PropTypes.number,
+			verticalMargin: React.PropTypes.number,
+			horizontalMargin: React.PropTypes.number,
 			cellPadding: React.PropTypes.number,
 			wrapperHeight: React.PropTypes.number,
 			lazyCallback: React.PropTypes.func,
@@ -32,6 +33,8 @@ export default class InfiniteGrid extends React.Component {
 				height: this._itemHeight(),
 				width: this._itemWidth(),
 				gridWidth: 0,
+				verticalMargin: 10,
+				horizontalMargin: 10,
 				justifyRows: true,
 				itemsPerRow: 2,
 			},
@@ -63,10 +66,6 @@ export default class InfiniteGrid extends React.Component {
 	_gridStyle() {
 		return _.merge({
 			position: 'relative',
-			marginTop: this.props.gridPadding,
-			marginLeft: this.props.gridPadding,
-			marginBottom: this.props.gridPadding,
-			marginRight: this.props.gridPadding,
 			minHeight: this._getGridHeight(),
 			minWidth: '100%',
 		}, this.props.gridStyle);
@@ -77,10 +76,18 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_getGridHeight() {
-		var gridRow = Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow)
-		return (this.props.entries.length < this.state.itemDimensions.itemsPerRow) ?
-			this.state.itemDimensions.height :
-			(gridRow > 2) ? gridRow * this.state.itemDimensions.height : 3 * this.state.itemDimensions.height;
+		let rows = 0;
+
+		if (this.props.entries.length < this.state.itemDimensions.itemsPerRow) {
+			rows = 1;
+		} else {
+			rows = Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow);
+			if (this.props.entries.length % this.state.itemDimensions.itemsPerRow > 0) {
+				rows += 1;
+			}
+		}
+
+		return (this.props.verticalMargin * 2) + (rows * this.state.itemDimensions.height) + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
 	}
 
 	_getWrapperRect() {
@@ -119,6 +126,8 @@ export default class InfiniteGrid extends React.Component {
 				height: this._itemHeight(),
 				width: this._itemWidth(),
 				gridWidth: this._getGridRect().width,
+				verticalMargin: this.props.verticalMargin,
+				horizontalMargin: this.props.horizontalMargin,
 				justifyRows: this.props.justifyRows,
 				itemsPerRow: this._itemsPerRow(),
 			},
@@ -127,12 +136,12 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_itemsPerRow() {
-		return Math.floor((this._getGridRect().width + this.props.cellPadding) / (this._itemWidth() + this.props.cellPadding));
+		return Math.floor((this._getGridRect().width + this.props.cellPadding - (this.props.horizontalMargin * 2)) / (this._itemWidth() + this.props.cellPadding));
 	}
 
 	_totalRows() {
 		const rows = this.props.entries.length / this._itemsPerRow();
-		const scrolledPastHeight = rows * this._itemHeight() + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
+		const scrolledPastHeight = this.props.verticalMargin + (rows * this._itemHeight()) + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
 		if (scrolledPastHeight < 0) return 0;
 		return scrolledPastHeight;
 	}
@@ -140,7 +149,7 @@ export default class InfiniteGrid extends React.Component {
 	_scrolledPastRows() {
 		const rect = this._getGridRect();
 		const topScrollOffset = rect.height - rect.bottom;
-		return Math.floor((topScrollOffset + this.props.cellPadding) / (this._itemHeight() + this.props.cellPadding));
+		return Math.floor((topScrollOffset + this.props.cellPadding - this.props.verticalMargin) / (this._itemHeight() + this.props.cellPadding));
 	}
 
 	_itemHeight() {
@@ -152,7 +161,7 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_numVisibleRows() {
-		return Math.ceil((this._getWrapperRect().height + this.props.cellPadding) / (this._itemHeight() + this.props.cellPadding));
+		return Math.ceil((this._getWrapperRect().height + this.props.cellPadding - this.props.verticalMargin) / (this._itemHeight() + this.props.cellPadding));
 	}
 
 	_lazyCallback() {
@@ -257,7 +266,8 @@ export default class InfiniteGrid extends React.Component {
 
 InfiniteGrid.defaultProps = {
 	buffer: 10,
-	gridPadding: 10,
+	verticalMargin: 10,
+	horizontalMargin: 10,
 	cellPadding: 10,
 	entries: [],
 	cellHeight: 250,
