@@ -226,25 +226,23 @@ export default class InfiniteGrid extends React.Component {
 	render() {
 		var entries = [];
 
-		// if no entries exist, there's nothing left to do
-		if (!this.props.entries.length) {
-			return null;
+		if (this.props.entries.length) {
+			for (let i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
+				let entry = this.props.entries[i];
+				if (!entry) {
+					continue;
+				}
+				const itemProps = {
+					key: 'item-' + i,
+					index: i,
+					padding: this.props.cellPadding,
+					dimensions: this.state.itemDimensions,
+					data: entry
+				};
+				entries.push(<Item {...itemProps} />);
+			}
 		}
 
-		for (let i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
-			let entry = this.props.entries[i];
-			if (!entry) {
-				continue;
-			}
-			const itemProps = {
-				key: 'item-' + i,
-				index: i,
-				padding: this.props.cellPadding,
-				dimensions: this.state.itemDimensions,
-				data: entry
-			};
-			entries.push(<Item {...itemProps} />);
-		}
 		return (
 			<div className='infinite-grid-wrapper' ref='wrapper' onScroll={this._scrollListener} style={this._wrapperStyle()}>
 				<div ref='grid' className='infinite-grid' style={this._gridStyle()}>

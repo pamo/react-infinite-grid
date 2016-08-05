@@ -284,25 +284,23 @@ var InfiniteGrid = function (_React$Component) {
 		value: function render() {
 			var entries = [];
 
-			// if no entries exist, there's nothing left to do
-			if (!this.props.entries.length) {
-				return null;
+			if (this.props.entries.length) {
+				for (var i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
+					var entry = this.props.entries[i];
+					if (!entry) {
+						continue;
+					}
+					var itemProps = {
+						key: 'item-' + i,
+						index: i,
+						padding: this.props.cellPadding,
+						dimensions: this.state.itemDimensions,
+						data: entry
+					};
+					entries.push(_react2.default.createElement(_item2.default, itemProps));
+				}
 			}
 
-			for (var i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
-				var entry = this.props.entries[i];
-				if (!entry) {
-					continue;
-				}
-				var itemProps = {
-					key: 'item-' + i,
-					index: i,
-					padding: this.props.cellPadding,
-					dimensions: this.state.itemDimensions,
-					data: entry
-				};
-				entries.push(_react2.default.createElement(_item2.default, itemProps));
-			}
 			return _react2.default.createElement(
 				'div',
 				{ className: 'infinite-grid-wrapper', ref: 'wrapper', onScroll: this._scrollListener, style: this._wrapperStyle() },
