@@ -8,16 +8,25 @@ export default class Item extends React.Component {
 	}
 
 	_itemWidth() {
-		return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
+		if (this.props.dimensions.justifyRows) {
+			return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
+		} else {
+			return this.props.dimensions.width;
+		}
 	}
 
 	_itemLeft() {
-		var column = this.props.index % this.props.dimensions.itemsPerRow;
-		return column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow);
+		let column = this.props.index % this.props.dimensions.itemsPerRow;
+		if (this.props.dimensions.justifyRows) {
+			return column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow);
+		} else {
+			return (column * this.props.padding) + (column * this.props.dimensions.width);
+		}
 	}
 
 	_itemTop() {
-		return Math.floor(this.props.index / this.props.dimensions.itemsPerRow) * this.props.dimensions.height;
+		let row = Math.floor(this.props.index / this.props.dimensions.itemsPerRow);
+		return (row * this.props.padding) + (row * this.props.dimensions.height);
 	}
 
 	// LIFECYCLE
@@ -30,8 +39,8 @@ export default class Item extends React.Component {
 
 	render() {
 		const _style = {
-			width: this._itemWidth() - this.props.padding,
-			height: this.props.dimensions.height - this.props.padding,
+			width: this._itemWidth(),
+			height: this.props.dimensions.height,
 			left: this._itemLeft(),
 			top: this._itemTop(),
 			position: 'absolute'

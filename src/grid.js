@@ -8,13 +8,15 @@ export default class InfiniteGrid extends React.Component {
 		return {
 			itemClassName: React.PropTypes.string,
 			entries: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-			height: React.PropTypes.number,
-			width: React.PropTypes.number,
-			padding: React.PropTypes.number,
+			cellHeight: React.PropTypes.number,
+			cellWidth: React.PropTypes.number,
+			gridPadding: React.PropTypes.number,
+			cellPadding: React.PropTypes.number,
 			wrapperHeight: React.PropTypes.number,
 			lazyCallback: React.PropTypes.func,
 			renderRangeCallback: React.PropTypes.func,
 			buffer: React.PropTypes.number,
+			justifyRows: React.PropTypes.bool,
 			gridStyle: React.PropTypes.object,
 			shouldComponentUpdate: React.PropTypes.func
 		}
@@ -28,8 +30,9 @@ export default class InfiniteGrid extends React.Component {
 			maxItemIndex: 100,
 			itemDimensions: {
 				height: this._itemHeight(),
-				width: this._itemHeight(),
+				width: this._itemWidth(),
 				gridWidth: 0,
+				justifyRows: true,
 				itemsPerRow: 2,
 			},
 		};
@@ -60,8 +63,10 @@ export default class InfiniteGrid extends React.Component {
 	_gridStyle() {
 		return _.merge({
 			position: 'relative',
-			marginTop: this.props.padding,
-			marginLeft: this.props.padding,
+			marginTop: this.props.gridPadding,
+			marginLeft: this.props.gridPadding,
+			marginBottom: this.props.gridPadding,
+			marginRight: this.props.gridPadding,
 			minHeight: this._getGridHeight(),
 			minWidth: '100%',
 		}, this.props.gridStyle);
@@ -112,8 +117,9 @@ export default class InfiniteGrid extends React.Component {
 		this.setState({
 			itemDimensions: {
 				height: this._itemHeight(),
-				width: this._itemHeight(),
+				width: this._itemWidth(),
 				gridWidth: this._getGridRect().width,
+				justifyRows: this.props.justifyRows,
 				itemsPerRow: this._itemsPerRow(),
 			},
 			minHeight: this._totalRows(),
@@ -121,11 +127,12 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_itemsPerRow() {
-		return Math.floor(this._getGridRect().width / this._itemWidth());
+		return Math.floor((this._getGridRect().width + this.props.cellPadding) / (this._itemWidth() + this.props.cellPadding));
 	}
 
 	_totalRows() {
-		const scrolledPastHeight = (this.props.entries.length / this._itemsPerRow()) * this._itemHeight();
+		const rows = this.props.entries.length / this._itemsPerRow();
+		const scrolledPastHeight = rows * this._itemHeight() + (rows > 1 ? (rows - 1) * this.props.cellPadding : 0);
 		if (scrolledPastHeight < 0) return 0;
 		return scrolledPastHeight;
 	}
@@ -133,19 +140,19 @@ export default class InfiniteGrid extends React.Component {
 	_scrolledPastRows() {
 		const rect = this._getGridRect();
 		const topScrollOffset = rect.height - rect.bottom;
-		return Math.floor(topScrollOffset / this._itemHeight());
+		return Math.floor((topScrollOffset + this.props.cellPadding) / (this._itemHeight() + this.props.cellPadding));
 	}
 
 	_itemHeight() {
-		return this.props.height + (2 * this.props.padding);
+		return this.props.cellHeight;
 	}
 
 	_itemWidth() {
-		return this.props.width + (2 * this.props.padding);
+		return this.props.cellWidth;
 	}
 
 	_numVisibleRows() {
-		return Math.ceil(this._getWrapperRect().height / this._itemHeight());
+		return Math.ceil((this._getWrapperRect().height + this.props.cellPadding) / (this._itemHeight() + this.props.cellPadding));
 	}
 
 	_lazyCallback() {
@@ -232,7 +239,7 @@ export default class InfiniteGrid extends React.Component {
 			const itemProps = {
 				key: 'item-' + i,
 				index: i,
-				padding: this.props.padding,
+				padding: this.props.cellPadding,
 				dimensions: this.state.itemDimensions,
 				data: entry
 			};
@@ -252,12 +259,14 @@ export default class InfiniteGrid extends React.Component {
 
 InfiniteGrid.defaultProps = {
 	buffer: 10,
-	padding: 10,
+	gridPadding: 10,
+	cellPadding: 10,
 	entries: [],
-	height: 250,
-	width: 250,
+	cellHeight: 250,
+	cellWidth: 250,
+	justifyRows: true,
 	gridStyle: {},
 	shouldComponentUpdate: function(nextProps, nextState) {
 		return !isEqual(this.state, nextState)
-	} 
+	}
 }
