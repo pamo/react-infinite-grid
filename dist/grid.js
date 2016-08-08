@@ -238,6 +238,7 @@ var InfiniteGrid = function (_React$Component) {
 					initiatedLazyload: false
 				});
 			}
+
 			// Update these all the time because entries may change on the fly.
 			this._updateItemDimensions();
 			this._visibleIndexes();
@@ -252,6 +253,10 @@ var InfiniteGrid = function (_React$Component) {
 	}, {
 		key: 'shouldComponentUpdate',
 		value: function shouldComponentUpdate(nextProps, nextState) {
+			if (nextProps.wrapperHeight != this.props.wrapperHeight) {
+				return true;
+			}
+
 			if (this.props.shouldComponentUpdate) {
 				return this.props.shouldComponentUpdate.call(this, nextProps, nextState);
 			}

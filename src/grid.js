@@ -200,6 +200,10 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
+		if (nextProps.wrapperHeight != this.props.wrapperHeight) {
+			return true;
+		}
+
 		if (this.props.shouldComponentUpdate) {
 			return this.props.shouldComponentUpdate.call(this, nextProps, nextState)
 		}
