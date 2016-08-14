@@ -63,7 +63,9 @@ var InfiniteGrid = function (_React$Component) {
 				buffer: _react2.default.PropTypes.number,
 				justifyRows: _react2.default.PropTypes.bool,
 				gridStyle: _react2.default.PropTypes.object,
-				shouldComponentUpdate: _react2.default.PropTypes.func
+				scrollOffset: _react2.default.PropTypes.number,
+				shouldComponentUpdate: _react2.default.PropTypes.func,
+				scrollOffsetChanged: _react2.default.PropTyes.func
 			};
 		}
 	}]);
@@ -229,6 +231,7 @@ var InfiniteGrid = function (_React$Component) {
 		value: function componentDidMount() {
 			this._updateItemDimensions();
 			this._visibleIndexes();
+			this.refs.wrapper.scrollTop = this.props.scrollOffset;
 		}
 	}, {
 		key: 'componentWillReceiveProps',
@@ -282,6 +285,7 @@ var InfiniteGrid = function (_React$Component) {
 			clearTimeout(this.scrollOffset);
 			this.scrollOffset = setTimeout(function () {
 				_this2._visibleIndexes();
+				_this2.props.scrollOffsetChanged(_this2.refs.wrapper.scrollTop);
 			}, 10);
 		}
 	}, {
@@ -348,7 +352,9 @@ InfiniteGrid.defaultProps = {
 	cellWidth: 250,
 	justifyRows: true,
 	gridStyle: {},
+	scrollOffset: 0,
 	shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
 		return !(0, _lodash.isEqual)(this.state, nextState);
-	}
+	},
+	scrollOffsetChanged: function scrollOffsetChanged(scrollOffset) {}
 };

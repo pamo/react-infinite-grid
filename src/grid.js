@@ -19,7 +19,9 @@ export default class InfiniteGrid extends React.Component {
 			buffer: React.PropTypes.number,
 			justifyRows: React.PropTypes.bool,
 			gridStyle: React.PropTypes.object,
-			shouldComponentUpdate: React.PropTypes.func
+			scrollOffset: React.PropTypes.number,
+			shouldComponentUpdate: React.PropTypes.func,
+			scrollOffsetChanged: React.PropTyes.func
 		}
 	}
 
@@ -180,6 +182,7 @@ export default class InfiniteGrid extends React.Component {
 	componentDidMount() {
 		this._updateItemDimensions();
 		this._visibleIndexes();
+		this.refs.wrapper.scrollTop = this.props.scrollOffset;
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -225,6 +228,7 @@ export default class InfiniteGrid extends React.Component {
 		clearTimeout(this.scrollOffset);
 		this.scrollOffset = setTimeout(() => {
 			this._visibleIndexes();
+			this.props.scrollOffsetChanged(this.refs.wrapper.scrollTop);
 		}, 10);
 	}
 
@@ -282,7 +286,9 @@ InfiniteGrid.defaultProps = {
 	cellWidth: 250,
 	justifyRows: true,
 	gridStyle: {},
+	scrollOffset: 0,
 	shouldComponentUpdate: function(nextProps, nextState) {
 		return !isEqual(this.state, nextState)
-	}
+	},
+	scrollOffsetChanged: function(scrollOffset) { }
 }
