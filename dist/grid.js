@@ -284,8 +284,10 @@ var InfiniteGrid = function (_React$Component) {
 
 			clearTimeout(this.scrollOffset);
 			this.scrollOffset = setTimeout(function () {
-				_this2._visibleIndexes();
-				_this2.props.scrollOffsetChanged(_this2.refs.wrapper.scrollTop);
+				if (_this2.refs) {
+					_this2._visibleIndexes();
+					_this2.props.scrollOffsetChanged(_this2.refs.wrapper.scrollTop);
+				}
 			}, 10);
 		}
 	}, {

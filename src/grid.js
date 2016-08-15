@@ -227,8 +227,10 @@ export default class InfiniteGrid extends React.Component {
 	_scrollListener(event) {
 		clearTimeout(this.scrollOffset);
 		this.scrollOffset = setTimeout(() => {
-			this._visibleIndexes();
-			this.props.scrollOffsetChanged(this.refs.wrapper.scrollTop);
+			if (this.refs) {
+				this._visibleIndexes();
+				this.props.scrollOffsetChanged(this.refs.wrapper.scrollTop);
+			}
 		}, 10);
 	}
 
