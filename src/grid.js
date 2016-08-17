@@ -58,7 +58,7 @@ export default class InfiniteGrid extends React.Component {
 	_wrapperStyle() {
 		return {
 			maxHeight: this._getGridHeight(),
-			overflowY: 'scroll',
+			overflowY: 'auto',
 			width: '100%',
 			height: this.props.wrapperHeight,
 			WebkitOverflowScrolling: 'touch',

@@ -91,7 +91,7 @@ var InfiniteGrid = function (_React$Component) {
 		value: function _wrapperStyle() {
 			return {
 				maxHeight: this._getGridHeight(),
-				overflowY: 'scroll',
+				overflowY: 'auto',
 				width: '100%',
 				height: this.props.wrapperHeight,
 				WebkitOverflowScrolling: 'touch'
